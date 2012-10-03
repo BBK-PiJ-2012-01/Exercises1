@@ -1,3 +1,5 @@
+import groovy.time.*
+
 int getNumberFromUser(){
     int num
     try {
@@ -21,13 +23,17 @@ float calculatePiWithN(int n) {
     return pi_over_four * 4
 }
 
-def calculatePiToNSigFig(int n) {
-    double pi=0, old_pi=-1, real_pi=3.14159265358
+void calculatePiToNSigFig(int n) {
+    double pi=0, old_pi_rounded=-1, real_pi=((double)3.14159265358).round(n)
     int stable_for=0, stable_at
     int k = 0
+    def start_time = new Date()
+    
+    println "\nHow large must n be for pi to be correct to " + n + "d.p.? "
+    
     while (true) {
         pi += 4*(-1)**k/(2*k+1)
-        if (pi.round(n+2) == old_pi.round(n+2))
+        if (pi.round(n) == old_pi_rounded)
             stable_for++
         else {
             stable_for = 0
@@ -36,10 +42,18 @@ def calculatePiToNSigFig(int n) {
         if (stable_for > 100)
             break
         k++
+        old_pi_rounded = pi.round(n)
     }
-    println "real_pi = " + real_pi + " , calculated pi = " + pi
+
     pi = pi.round(n)
-    return [calculated:pi, stable_at:stable_at, success:(pi==real_pi.round(n))]
+    TimeDuration duration = TimeCategory.minus(new Date(), start_time)
+    
+    if (pi==real_pi)
+        println "Success!  It took " + k + " iterations (" + duration + ") to be accurate to " + n + "d.p."
+    else
+        println "Failure!  From our calculations, pi = " + pi + " , but actually p = " + real_pi
+
+        println ""
 }
 
 print "Enter the number of terms in the series to evaluate: "
@@ -51,10 +65,5 @@ println '-'.multiply( result.length() )
 println result
 println '-'.multiply( result.length() )
 
-println "\nHow large must n be for pi to be correct to 2d.p.? "
-pi_results = calculatePiToNSigFig(2)
-if 
-println "It took n=" + 
 
-println "\nHow large must n be for pi to be correct to 9d.p.? "
-println "It took n=" + calculatePiToNSigFig(9)
+for (i in 2..9) {calculatePiToNSigFig(i)}
