@@ -5,3 +5,4 @@ pf.findFirstNPrimes(100)
 primes = pf.cardinalRange(1, 1000)
 
 for (n in primes){ println "   " + n }
+//println "Found " + primes.size() + " primes."

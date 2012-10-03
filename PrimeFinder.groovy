@@ -94,7 +94,7 @@ class PrimeFinder{
             primes_known_upto += 1
             if (isPrime(primes_known_upto)) {
                 // Add this prime to our list of known primes
-                known_primes.add(test_number)
+                known_primes.add(primes_known_upto)
             }
         }
         
