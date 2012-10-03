@@ -1,15 +1,4 @@
-int getNumberFromUser(){
-    int num
-    try {
-        String str = System.console().readLine()
-        num = Integer.parseInt(str)
-    } catch(all) {
-        throw new BadNumber()
-    }
-    return num
-}
-
-println "Give me some numbers and I'll give you back the largest of them: "
+println "Give me consecutive numbers EITHER going up OR down.  Type -1 to end."
 
 enum Sequence {
     up, down, bad, undefined, empty
@@ -20,7 +9,7 @@ Sequence direction = Sequence.empty
 
 
 while(true) {
-    current_num = getNumberFromUser()
+    current_num = IOGeneric.getNumberFromUser()
     if (current_num == -1)
         break
     else if (direction == Sequence.undefined) {
@@ -37,8 +26,6 @@ while(true) {
         direction = Sequence.bad
     else if (direction == Sequence.down && current_num - last_num != -1)
         direction = Sequence.bad
-    else
-        println "... fine ..."
         
     last_num = current_num
 } 
@@ -52,6 +39,4 @@ if ([Sequence.bad, Sequence.empty, Sequence.undefined].contains(direction))
 else
     result = "Yes"
 
-println '-'.multiply( result.length() )
-println result
-println '-'.multiply( result.length() )
+IOGeneric.printResult(result)

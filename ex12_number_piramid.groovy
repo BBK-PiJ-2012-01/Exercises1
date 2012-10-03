@@ -1,20 +1,9 @@
-int getNumberFromUser(){
-    int num
-    try {
-        String str = System.console().readLine()
-        num = Integer.parseInt(str)
-    } catch(all) {
-        throw new BadNumber()
-    }
-    return num
-}
-
-println "How many lines should be in the pyramid? (max 9)"
-int max_lines = getNumberFromUser()
+print "How many lines should be in the pyramid? (max 9) "
+int max_lines = IOGeneric.getNumberFromUser()
 println "-"*max_lines
 
 if (max_lines < 1 || max_lines > 9)
-    throw new BadNumber(max_lines)
+    throw new BadInput(max_lines)
     
 String str
 

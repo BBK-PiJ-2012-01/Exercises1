@@ -1,19 +1,5 @@
 import groovy.time.*
 
-int getNumberFromUser(){
-    int num
-    try {
-        String str = System.console().readLine()
-        num = Integer.parseInt(str)
-    } catch(all) {
-        throw new BadNumber()
-    }
-    
-    if (num<2)
-        throw new BadNumber()
-        
-    return num
-}
 
 float calculatePiWithN(int n) {
     double pi_over_four = 0
@@ -24,6 +10,14 @@ float calculatePiWithN(int n) {
 }
 
 void calculatePiToNSigFig(int n) {
+    /*
+    *    Iterates until pi value is stable up to precision of n
+    *    for at least 100 iterations.
+    *
+    *    If the stable pi value is different to the given value,
+    *    then print "Failure!".  Otherwise say how many iterations
+    *    and how much time it took to calculate.
+    */
     double pi=0, old_pi_rounded=-1, real_pi=((double)3.14159265358).round(n)
     int stable_for=0, stable_at
     int k = 0
@@ -58,12 +52,11 @@ void calculatePiToNSigFig(int n) {
 
 print "Enter the number of terms in the series to evaluate: "
 
-
-String result = calculatePiWithN( getNumberFromUser() )
-
-println '-'.multiply( result.length() )
-println result
-println '-'.multiply( result.length() )
-
+int n = IOGeneric.getNumberFromUser()
+if (n < 2)
+    throw new BadInput(n)
+    
+String result = calculatePiWithN(n)
+IOGeneric.printResult(result)
 
 for (i in 2..9) {calculatePiToNSigFig(i)}

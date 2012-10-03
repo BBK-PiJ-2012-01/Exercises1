@@ -4,24 +4,12 @@ def pf = new PrimeFinder()
 // which needs to know all prime numbers lower than the 
 // test_number.
 
-int getNumberFromUser(){
-    int num
-    try {
-        String str = System.console().readLine()
-        num = Integer.parseInt(str)
-    } catch(all) {
-        throw new BadNumber()
-    }
-    
-    if (num<2)
-        throw new BadNumber()
-        
-    return num
-}
-
 print "Enter the number to search near for a prime number: "
-int distance=0, number=getNumberFromUser()
+int distance=0, number=IOGeneric.getNumberFromUser()
 def primes = []
+
+if (number < 2)
+    throw new BadInput(number)
 
 if (pf.isPrime(number))
     primes.add(number)

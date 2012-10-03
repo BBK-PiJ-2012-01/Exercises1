@@ -1,18 +1,12 @@
 import java.lang.NumberFormatException
 
 
-class BadInput extends Exception{
-    BadInput(def value){
-        println "Input of " + value + " is not appropriate"
-    }
-    
-    BadInput(){
-        println "No input given!"
-    }
-}
-
-
 class Card{
+    /*
+    *    Holds the card's rank and suit, and allows for
+    *    equality checks.
+    */
+    
     static def RankValues = [J:11, Q:12, K:13, A:1]
     static def Suits = [spades:0, hearts:1, diamonds:2, clubs:3]
     
@@ -37,15 +31,19 @@ class Card{
 
 
 class Hand{
-    // Hand contains cards and statistical information on them
-    // (and the methods to get it)
+    /*
+    *    The hand contains 5 cards, and performs statistical analysis
+    *    which can be used to determine the best Poker trick.
+    */
+    
     def cards
     def sorted_ranks, ranks_with_high_ace, conforming_ranks
     def sorted_suits
     int max_conforming_suits
     boolean ranks_consecutive
     
-    String trick = ""
+    String trick
+
     
     Hand(def new_cards){
         cards = new_cards
@@ -55,6 +53,12 @@ class Hand{
         ranks_with_high_ace = sorted_ranks[number_of_aces..sorted_ranks.size()-1] + [14]*number_of_aces
         
         sorted_suits = (new_cards*.getSuit()).sort()
+        
+        computeRankConsecutivity()
+        computeRankConformity()
+        computeSuitConformity()
+        
+        findBestTrick()
     }
     
     void computeRankConsecutivity(){
@@ -67,8 +71,6 @@ class Hand{
             sequential_ranks = ranks_with_high_ace[0]..ranks_with_high_ace[-1]
             ranks_consecutive = (ranks_with_high_ace == sequential_ranks)
         }
-        
-        //println "Rank consecutivity = " + ranks_consecutive
     }
     
     void computeRankConformity(){
@@ -80,8 +82,6 @@ class Hand{
             conforming_ranks.add(sorted_ranks.count(rank.value))
         }
         conforming_ranks = conforming_ranks.sort().reverse()
-        
-        //println "Rank conformity = " + conforming_ranks
     }
     
     void computeSuitConformity(){
@@ -93,23 +93,29 @@ class Hand{
             if (current_count > max_conforming_suits)
                 max_conforming_suits = current_count
         }
-        
-        //println "Suit conformity = " + max_conforming_suits
     }
-}
-
-
-class HandPicker extends Hand{
-    // Extends 'Hand' with the ability to interpret the
-    // statistical information within a 'Hand' object
-    // and decide on the best hand.
-    HandPicker(def new_cards){
-        super(new_cards)
+    
+    boolean checkForFullHouse(){
+        def Set1 = [cards[0]], Set2 = []
         
-        computeRankConsecutivity()
-        computeRankConformity()
-        computeSuitConformity()
+        for (card in cards[1..4]){
+            if (Set1[0].equals(card))
+                Set1.add(card)
+            else if (Set2.size() == 0)
+                Set2.add(card)
+            else if (Set2[0].equals(card))
+                Set2.add(card)
+            else
+                return false
+        }
         
+        if ([Set1.size(), Set2.size()].sort() == [2,3])
+            return true
+        else
+            return false
+    }
+    
+    void findBestTrick() {
         if (max_conforming_suits == 5 && ranks_consecutive)
             trick = "Straight Flush"
         else if (conforming_ranks[0] >= 4)
@@ -127,43 +133,17 @@ class HandPicker extends Hand{
         else if (conforming_ranks[0] == 2)
             trick = "Pair"
         else
-            trick = "Nothing"
-    }
-    
-    boolean checkForFullHouse(){
-        def Set1 = [cards[0]], Set2 = []
-        
-        for (card in cards[1..4]){
-            if (Set1[0].equals(card))
-                Set1.add(card)
-            else if (Set2.size() == 0)
-                Set2.add(card)
-            else if (Set2[0].equals(card))
-                Set2.add(card)
-            else
-                return false
-        }
-        
-        println "One set has " + Set1.size() + " and the other has " + Set2.size()
-        if ([Set1.size(), Set2.size()].sort() == [2,3])
-            return true
-        else
-            return false
+            trick = "Nothing"       
     }
 }
+
            
 
-class IOClass{
-    // Handles user input/output with the above classes.
-    HandPicker hand
-    
-    IOClass(){
-        hand = getHandFromUser()
-        printResult(hand.trick)
-    }
+class IOPoker extends IOGeneric {
+    // Extends IOGeneric to allow inputting cards instead of just numbers
 
-    Card getCardFromUser(){
-        println "Enter card rank: (2 - 10, J, Q, K, A)"
+    static Card getCardFromUser(){
+        print "Enter card rank (2 - 10, J, Q, K, A): "
         String str
         int rank
         try {
@@ -180,7 +160,7 @@ class IOClass{
         }
         
         
-        println "Enter card suit: (spades, clubs, hearts, diamonds)"
+        print "Enter card suit (spades, clubs, hearts, diamonds): "
         int suit
         str = System.console().readLine().toLowerCase()
         if (Card.Suits.containsKey(str))
@@ -192,7 +172,7 @@ class IOClass{
     }
     
     
-    Hand getHandFromUser(){
+    static Hand getHandFromUser(){
         println "Give me five cards!"
         
         def cards = []
@@ -201,18 +181,9 @@ class IOClass{
             cards.add( getCardFromUser() )
             //cards.add( new Card(i%4, i+1) )
         }
-        return new HandPicker(cards)
+        return new Hand(cards)
     }
-
-
-    def printResult(String result) {
-        println ""
-        println '-'.multiply( result.length() )
-        println result
-        println '-'.multiply( result.length() )
-    }
-    
 }
 
-io = new IOClass()
-
+Hand h = IOPoker.getHandFromUser()
+IOPoker.printResult(h.trick)

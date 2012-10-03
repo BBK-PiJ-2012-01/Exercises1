@@ -1,12 +1,12 @@
-class BadPlay extends BadNumber {}
+class BadPlay extends BadInput {}
 
-def getPlayFromUser(){
-    
-    
-    return num
-}
 
 class Choice implements Comparable<Choice> {
+    /*
+    *    Any one person's choice in one game (eg. rock).
+    *    It can be compared to another choice to see who
+    *    wins the game (ie. winner > loser).
+    */
     static Order = [R:0, P:1, S:2]
     int value
     
@@ -29,6 +29,10 @@ class Choice implements Comparable<Choice> {
 }
 
 class Game {
+    /*
+    *    Stores the player scores and takes their inputs,
+    *    and announces the winner.
+    */
     int p1score=0, p2score=0
     int winner = 0
     
@@ -49,18 +53,42 @@ class Game {
     }
     
     void playFromKeyboard() {
-        while(winner == 0) {
+        while (winner == 0) {
             print "Enter the play: "
             String str = System.console().readLine().toUpperCase()
             if (str.size() != 2)
                 throw new BadPlay(str)
             play(str)
         }
-        println "Player " + winner + " won!!"
+        announceWinner()
+    }
+    
+    void playFromFile(String filename) {
+        File file = new File(filename)
+        
+        // Each line of size 2 is passed to play.
+        file.eachLine { line -> 
+            if (line.size() >= 2)
+                play(line[0..1]) 
+        }
+        announceWinner()
+    }
+    
+    void announceWinner() {
+        if (winner == 0)
+            println "No winner... player 1: " + p1score + ", player 2: " + p2score
+        else
+            println "Player " + winner + " won!!"
     }
     
 }
 
 
 g = new Game()
-g.playFromKeyboard()
+println "If playing from file, enter filename (eg. 'play.txt')."
+print  "Otherwise press enter: "
+String str = System.console().readLine()
+if (str.size() == 0)
+    g.playFromKeyboard()
+else
+    g.playFromFile(str)

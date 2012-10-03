@@ -1,21 +1,10 @@
-int getNumberFromUser(){
-    int num
-    try {
-        String str = System.console().readLine()
-        num = Integer.parseInt(str)
-    } catch(all) {
-        throw new BadNumber()
-    }
-    return num
-}
+println "Give me consecutive numbers up.  Type -1 to end."
 
-println "Give me some numbers and I'll give you back the largest of them: "
-
-int last_num = getNumberFromUser(), current_num
+int last_num = IOGeneric.getNumberFromUser(), current_num
 String result = "Yes"
 
 while(true) {
-    current_num = getNumberFromUser()
+    current_num = IOGeneric.getNumberFromUser()
     if (current_num == -1)
         break
     if (current_num - last_num != 1)
@@ -23,6 +12,4 @@ while(true) {
     last_num = current_num
 } 
 
-println '-'.multiply( result.length() )
-println result
-println '-'.multiply( result.length() )
+IOGeneric.printResult(result)

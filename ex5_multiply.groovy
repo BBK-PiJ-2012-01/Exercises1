@@ -1,21 +1,14 @@
-int getNumberFromUser(){
-    int num
-    try {
-        String str = System.console().readLine()
-        num = Integer.parseInt(str)
-    } catch(all) {
-        throw new BadNumber()
-    }
-    return num
-}
-
 println "Enter the first number: "
-int num1 = getNumberFromUser()
+int num1 = IOGeneric.getNumberFromUser()
 
 println "Enter the second number: "
-int num2 = getNumberFromUser()
+int num2 = IOGeneric.getNumberFromUser()
 
 String result = num1 + " * " + num2 + " = " + num1.multiply(num2)
-println '-'.multiply( result.length() )
-println result
-println '-'.multiply( result.length() )
+
+IOGeneric.printResult(result)
+
+/*
+*    I think that, while I adhered to the letter of the exercise,
+*    I might have ignored its spirit...
+*/
